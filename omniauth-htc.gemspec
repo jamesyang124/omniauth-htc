@@ -6,14 +6,13 @@ Gem::Specification.new do |spec|
   spec.name          = "omniauth-htc"
   spec.version       = OmniAuth::Htc::VERSION
   spec.authors       = ["James Yang"]
-  spec.email         = ["james_yang@htc.com"]
+  spec.email         = ["jamesyang124@gmail.com"]
 
   spec.summary       = "OmniAuth stratgey for single sign on with HTC"
   spec.description   = "OmniAuth stratgey for single sign on with HTC"
   spec.homepage      = "https://github.com/jamesyang124/omniauth-htc"
   spec.license       = "MIT"
-  spec.required_ruby_version = Gem::Requirement.new(">= 2.4.0")
-
+  spec.required_ruby_version = Gem::Requirement.new(">= 2.7.0")
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["changelog_uri"] = "https://github.com/jamesyang124/omniauth-htc/blob/master/CHANGELOG.md"
@@ -30,9 +29,8 @@ Gem::Specification.new do |spec|
   # Uncomment to register a new dependency of your gem
   spec.add_dependency "omniauth", "~> 2.0"
 
-  spec.add_development_dependency "rspec", "~> 3.10"
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rspec", "~> 3.10"
   spec.add_development_dependency "rubocop", "~> 1.7"
-
 end
