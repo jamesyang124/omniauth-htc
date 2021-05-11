@@ -30,45 +30,10 @@ module OmniAuth
         super
       end
 
-      protected
+      private
 
       def raw_info
         @raw_info ||= fetch_user_info
-      end
-
-      def access_token_uri
-        @access_token_uri ||= URI::HTTPS.build(
-          host: options[:be_host],
-          path: options[:access_token_path]
-        )
-      end
-
-      def user_info_uri
-        @user_info_uri ||= URI::HTTPS.build(
-          host: options[:user_info_host],
-          path: options[:user_info_path],
-          query: "fields=firstName,id,lastName"
-        )
-      end
-
-      def sso_auth_state_param
-        @sso_auth_state_param ||= {
-          clientId: options.authorize_options[:client_id],
-          redirectionUrl: options.authorize_options[:redirection_url],
-          scopes: options.authorize_options[:scope],
-          requireAuthCode: true,
-          authorities: "htc.com"
-        }.to_json
-      end
-
-      def sso_auth_params
-        @sso_auth_params ||= {
-          client_id: options.authorize_options[:client_id],
-          redirection_url: options.authorize_options[:redirection_url],
-          scopes: options.authorize_options[:scope],
-          response_type: "code",
-          state: sso_auth_state_param
-        }
       end
 
       def sso_auth_uri
@@ -77,14 +42,6 @@ module OmniAuth
           path: options[:authorize_path],
           query: @sso_auth_params.to_query
         )
-      end
-
-      def access_token_params
-        @access_token_params ||= {
-          client_id: options.authorize_options[:client_id],
-          client_secret: options.authorize_options[:client_secret],
-          grant_type: "authorization_code"
-        }
       end
 
       def fetch_access_token(code)
@@ -120,6 +77,46 @@ module OmniAuth
           token: #{access_token}
           res: #{response.body}
         MSG
+      end
+
+      def access_token_uri
+        @access_token_uri ||= URI::HTTPS.build(host: options[:be_host], path: options[:access_token_path])
+      end
+
+      def user_info_uri
+        @user_info_uri ||= URI::HTTPS.build(
+          host: options[:user_info_host],
+          path: options[:user_info_path],
+          query: "fields=firstName,id,lastName"
+        )
+      end
+
+      def sso_auth_state_param
+        @sso_auth_state_param ||= {
+          clientId: options.authorize_options[:client_id],
+          redirectionUrl: options.authorize_options[:redirection_url],
+          scopes: options.authorize_options[:scope],
+          requireAuthCode: true,
+          authorities: "htc.com"
+        }.to_json
+      end
+
+      def sso_auth_params
+        @sso_auth_params ||= {
+          client_id: options.authorize_options[:client_id],
+          redirection_url: options.authorize_options[:redirection_url],
+          scopes: options.authorize_options[:scope],
+          response_type: "code",
+          state: sso_auth_state_param
+        }
+      end
+
+      def access_token_params
+        @access_token_params ||= {
+          client_id: options.authorize_options[:client_id],
+          client_secret: options.authorize_options[:client_secret],
+          grant_type: "authorization_code"
+        }
       end
     end
   end
