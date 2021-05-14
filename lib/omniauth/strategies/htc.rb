@@ -9,14 +9,19 @@ module OmniAuth
       include OmniAuth::Strategy
 
       def self.option(name, value = nil)
-        default_options.deep_merge!(value) if name.eql? :idp_info
+        if name.eql? :idp_info
+          default_options.deep_merge!(value)
+        else
+          default_options[name] = value
+        end
       end
 
       option :idp_info,
+        auth_host: "account.htcvive.com",
         authorize_path: "/SS/api/oauth/v2/authorize",
-        access_token_path: "/SS/api/oauth/v2/token/authorization-code",
-        user_info_path: "/SS/Profiles/v3/Me",
-        user_info_host: "profiledev.htcwowdev.com"
+        token_path: "/SS/api/oauth/v2/token/authorization-code",
+        user_info_host: "account-profile.htcvive.com",
+        user_info_path: "/SS/Profiles/v3/Me"
 
       option :client_id
       option :scope
@@ -46,8 +51,8 @@ module OmniAuth
 
       def sso_auth_uri
         @sso_auth_uri ||= URI::HTTPS.build(
-          host: options[:be_host],
-          path: options[:authorize_path],
+          host: options.auth_host,
+          path: options.authorize_path,
           query: @sso_auth_params.to_query
         )
       end
@@ -88,22 +93,22 @@ module OmniAuth
       end
 
       def access_token_uri
-        @access_token_uri ||= URI::HTTPS.build(host: options[:be_host], path: options[:access_token_path])
+        @access_token_uri ||= URI::HTTPS.build(host: options.auth_host, path: options.token_path)
       end
 
       def user_info_uri
         @user_info_uri ||= URI::HTTPS.build(
-          host: options[:user_info_host],
-          path: options[:user_info_path],
+          host: options.user_info_host,
+          path: options.user_info_path,
           query: "fields=firstName,id,lastName"
         )
       end
 
       def sso_auth_state_param
         @sso_auth_state_param ||= {
-          clientId: options.authorize_options[:client_id],
-          redirectionUrl: options.authorize_options[:redirection_url],
-          scopes: options.authorize_options[:scope],
+          clientId: options.client_id,
+          redirectionUrl: options.redirection_url,
+          scopes: options.scope,
           requireAuthCode: true,
           authorities: "htc.com"
         }.to_json
@@ -111,9 +116,9 @@ module OmniAuth
 
       def sso_auth_params
         @sso_auth_params ||= {
-          client_id: options.authorize_options[:client_id],
-          redirection_url: options.authorize_options[:redirection_url],
-          scopes: options.authorize_options[:scope],
+          client_id: options.client_id,
+          redirection_url: options.redirection_url,
+          scopes: options.scope,
           response_type: "code",
           state: sso_auth_state_param
         }
@@ -121,8 +126,8 @@ module OmniAuth
 
       def access_token_params
         @access_token_params ||= {
-          client_id: options.authorize_options[:client_id],
-          client_secret: options.authorize_options[:client_secret],
+          client_id: options.client_id,
+          client_secret: options.client_secret,
           grant_type: "authorization_code"
         }
       end

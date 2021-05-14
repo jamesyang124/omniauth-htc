@@ -8,8 +8,13 @@ GEM
   remote: https://rubygems.org/
   specs:
     ast (2.4.2)
+    concurrent-ruby (1.1.8)
     diff-lcs (1.4.4)
+    faker (2.17.0)
+      i18n (>= 1.6, < 2)
     hashie (4.1.0)
+    i18n (1.8.10)
+      concurrent-ruby (~> 1.0)
     omniauth (2.0.4)
       hashie (>= 3.4.6)
       rack (>= 1.6.2, < 3)
@@ -56,6 +61,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.0)
+  faker (~> 2.0)
   omniauth-htc!
   rake (~> 13.0)
   rspec (~> 3.10)
