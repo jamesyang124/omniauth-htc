@@ -2,6 +2,7 @@
 
 require "omniauth"
 require "net/https"
+require "cgi"
 
 module OmniAuth
   module Strategies
@@ -24,7 +25,7 @@ module OmniAuth
         user_info_path: "/SS/Profiles/v3/Me"
 
       option :client_id
-      option :scope
+      option :scopes
       option :client_secret
       option :redirection_url
 
@@ -50,10 +51,12 @@ module OmniAuth
       end
 
       def sso_auth_uri
+        query = sso_auth_params.map { |k,v| to_query k, v }.join("&")
+
         @sso_auth_uri ||= URI::HTTPS.build(
           host: options.auth_host,
           path: options.authorize_path,
-          query: @sso_auth_params.to_query
+          query: query
         )
       end
 
@@ -108,7 +111,7 @@ module OmniAuth
         @sso_auth_state_param ||= {
           clientId: options.client_id,
           redirectionUrl: options.redirection_url,
-          scopes: options.scope,
+          scopes: options.scopes,
           requireAuthCode: true,
           authorities: "htc.com"
         }.to_json
@@ -118,7 +121,7 @@ module OmniAuth
         @sso_auth_params ||= {
           client_id: options.client_id,
           redirection_url: options.redirection_url,
-          scopes: options.scope,
+          scopes: options.scopes,
           response_type: "code",
           state: sso_auth_state_param
         }
@@ -130,6 +133,10 @@ module OmniAuth
           client_secret: options.client_secret,
           grant_type: "authorization_code"
         }
+      end
+
+      def to_query(k, v)
+        "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
       end
     end
   end
