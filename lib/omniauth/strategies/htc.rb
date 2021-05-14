@@ -8,12 +8,20 @@ module OmniAuth
     class Htc
       include OmniAuth::Strategy
 
-      option :authorize_path, "/SS/api/oauth/v1/authorize"
-      option :access_token_path, "/SS/api/oauth/v2/token/authorization-code"
-      option :user_info_path, "/SS/Profiles/v3/Me"
-      option :user_info_host, "profiledev.htcwowdev.com"
-      option :authorize_params, {}
-      option :authorize_options, %w[client_id scope client_secret redirection_url]
+      def self.option(name, value = nil)
+        default_options.deep_merge!(value) if name.eql? :idp_info
+      end
+
+      option :idp_info,
+        authorize_path: "/SS/api/oauth/v2/authorize",
+        access_token_path: "/SS/api/oauth/v2/token/authorization-code",
+        user_info_path: "/SS/Profiles/v3/Me",
+        user_info_host: "profiledev.htcwowdev.com"
+
+      option :client_id
+      option :scope
+      option :client_secret
+      option :redirection_url
 
       attr_accessor :access_token, :account_id
 
