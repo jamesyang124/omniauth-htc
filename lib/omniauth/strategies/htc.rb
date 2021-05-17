@@ -9,30 +9,34 @@ module OmniAuth
     class Htc
       include OmniAuth::Strategy
 
-      def self.option(name, value = nil)
-        if name.eql? :idp_info
-          default_options.deep_merge!(value)
-        else
-          default_options[name] = value
-        end
-      end
-
-      option :idp_info,
-        auth_host: "account.htcvive.com",
-        authorize_path: "/SS/api/oauth/v2/authorize",
-        token_path: "/SS/api/oauth/v2/token/authorization-code",
-        user_info_host: "account-profile.htcvive.com",
-        user_info_path: "/SS/Profiles/v3/Me"
+      option :auth_host, "account.htcvive.com"
+      option :authorize_path, "/SS/api/oauth/v2/authorize"
+      option :token_path, "/SS/api/oauth/v2/token/authorization-code"
+      option :user_info_host, "account-profile.htcvive.com"
+      option :user_info_path, "/SS/Profiles/v3/Me"
 
       option :client_id
       option :scopes
       option :client_secret
       option :redirection_url
 
-      attr_accessor :access_token, :account_id
+      attr_accessor :access_token, :expires_in
 
-      credentials { request.params }
-      info { raw_info }
+      credentials do
+        prune!(
+          "token" => access_token,
+          "expires_in" => expires_in
+        )
+      end
+
+      info do
+        prune!(
+          "uid" => uid,
+          "first_name" => raw_info["firstName"],
+          "last_name" => raw_info["lastName"]
+        )
+      end
+
       uid { raw_info["id"] }
 
       def request_phase
@@ -44,7 +48,7 @@ module OmniAuth
         super
       end
 
-      private
+      protected
 
       def raw_info
         @raw_info ||= fetch_user_info
@@ -65,15 +69,15 @@ module OmniAuth
 
         if response.code_type == Net::HTTPOK
           json = JSON.parse(response.body)
-          self.access_token = json["access_token"]
-          self.account_id = json["account_id"]
+          self.access_token = squish! json["access_token"]
+          self.expires_in = json["expires_in"]
 
           return
         end
 
-        raise OmniAuth::Error, <<~MSG
+        raise OmniAuth::NoSessionError, <<~MSG
           auth code for access token request failed -
-          code: #{request_body.code}
+          code: #{response.code}
           res: #{response.body}
         MSG
       end
@@ -88,7 +92,7 @@ module OmniAuth
 
         return JSON.parse(response.body) if response.code_type == Net::HTTPOK
 
-        raise OmniAuth::Error, <<~MSG
+        raise OmniAuth::NoSessionError, <<~MSG
           access token get user info request failed -
           token: #{access_token}
           res: #{response.body}
@@ -137,6 +141,19 @@ module OmniAuth
 
       def to_query(k, v)
         "#{CGI.escape(k.to_s)}=#{CGI.escape(v.to_s)}"
+      end
+
+      def prune!(hash)
+        hash.delete_if do |_, v|
+          prune!(v) if v.is_a?(Hash)
+          v.nil? || (v.respond_to?(:empty?) && v.empty?)
+        end
+      end
+
+      def squish!(str)
+        str.gsub!(/\A[[:space:]]+/, '')
+        str.gsub!(/[[:space:]]+\z/, '')
+        str.gsub!(/[[:space:]]+/, ' ')
       end
     end
   end
