@@ -2,7 +2,7 @@
 
 require 'spec_helper'
 require 'json'
-require 'omniauth_htc'
+require 'omniauth-htc'
 require 'faker'
 
 describe OmniAuth::Strategies::Htc do
