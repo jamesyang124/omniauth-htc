@@ -2,7 +2,17 @@
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/omniauth/htc`. To experiment with that code, run `bin/console` for an interactive prompt.
 
-TODO: Delete this and the text above, and describe your gem
+config example as below:
+
+```ruby
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :htc,
+    client_id: "c45bf35b-3f83-4c20-827e-b4f7781077ab",
+    scopes: "email",
+    client_secret: "",
+    redirection_url: ""
+end
+```
 
 ## Installation
 
