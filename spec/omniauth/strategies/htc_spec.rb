@@ -57,7 +57,7 @@ describe OmniAuth::Strategies::Htc do
     end
 
     it 'has pre-configured authorize api path' do
-      expect(subject.options.authorize_path).to be '/SS/api/oauth/v2/authorize'
+      expect(subject.options.authorize_path).to be '/SS/api/oauth/v1/authorize'
     end
 
     it 'has pre-configured access token api path' do

@@ -10,7 +10,7 @@ module OmniAuth
       include OmniAuth::Strategy
 
       option :auth_host, "account.htcvive.com"
-      option :authorize_path, "/SS/api/oauth/v2/authorize"
+      option :authorize_path, "/SS/api/oauth/v1/authorize"
       option :token_path, "/SS/api/oauth/v2/token/authorization-code"
       option :user_info_host, "account-profile.htcvive.com"
       option :user_info_path, "/SS/Profiles/v3/Me"
