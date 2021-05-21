@@ -158,5 +158,3 @@ module OmniAuth
     end
   end
 end
-
-OmniAuth.config.allowed_request_methods = %i[post get]

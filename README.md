@@ -12,6 +12,8 @@ Rails.application.config.middleware.use OmniAuth::Builder do
     client_secret: "",
     redirection_url: ""
 end
+
+OmniAuth.config.allowed_request_methods = %i[get post]
 ```
 
 ## Installation
