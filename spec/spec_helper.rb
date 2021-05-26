@@ -30,6 +30,7 @@ def squish!(str)
   str.gsub!(/\A[[:space:]]+/, '')
   str.gsub!(/[[:space:]]+\z/, '')
   str.gsub!(/[[:space:]]+/, ' ')
+  str
 end
 
 RSpec.configure do |config|

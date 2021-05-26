@@ -154,6 +154,7 @@ module OmniAuth
         str.gsub!(/\A[[:space:]]+/, '')
         str.gsub!(/[[:space:]]+\z/, '')
         str.gsub!(/[[:space:]]+/, ' ')
+        str
       end
     end
   end
